@@ -34,25 +34,33 @@ public static class ServerClass
             }
             catch
             {
-
+                Console.WriteLine("user Forcefully Disconnected");
             }
         }
     }
 
     public static void ClientHandler(Socket handler)
     {
-        Console.WriteLine("{0} connected", handler.RemoteEndPoint);
-        var buffer = new byte[1024];
-        
-        string logininfo = recievemessage(handler);
-        string[] parts = logininfo.Split(',');
-        if(parts[0] == "S")
+        try
         {
-            SignIn(handler,parts[1]);
+            Console.WriteLine("{0} connected", handler.RemoteEndPoint);
+            var buffer = new byte[1024];
+
+            string logininfo = recievemessage(handler);
+            string[] parts = logininfo.Split(',');
+            if (parts[0] == "S")
+            {
+                SignIn(handler, parts[1]);
+            }
+            else if (parts[0] == "C")
+            {
+                CreateNewUser(handler, parts[1]);
+            }
         }
-        else if (parts[0] == "C")
+        catch
         {
-            CreateNewUser(handler, parts[1]);
+            Console.WriteLine("user Forcefully Disconnected");
+            handler.Shutdown(SocketShutdown.Both);
         }
     }
 
