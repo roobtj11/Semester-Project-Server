@@ -46,15 +46,16 @@ public static class ServerClass
             Console.WriteLine("{0} connected", handler.RemoteEndPoint);
             var buffer = new byte[1024];
 
-            string logininfo = recievemessage(handler);
-            string[] parts = logininfo.Split(',');
-            if (parts[0] == "S")
+            string loginORcreate = recievemessage(handler);
+            if (loginORcreate == "C")
             {
-                SignIn(handler, parts[1]);
+                string username = recievemessage(handler);
+                CreateNewUser(handler, username);
             }
-            else if (parts[0] == "C")
+            else if (loginORcreate == "L")
             {
-                CreateNewUser(handler, parts[1]);
+                string username = recievemessage(handler);
+                SignIn(handler, username);
             }
         }
         catch
