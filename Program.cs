@@ -43,19 +43,24 @@ public static class ServerClass
     {
         try
         {
+            
             Console.WriteLine("{0} connected", handler.RemoteEndPoint);
             var buffer = new byte[1024];
+            for(; ; )
+            {
+                string loginORcreate = recievemessage(handler);
+                if (loginORcreate == "C")
+                {
+                    Console.WriteLine("{0} is trying to create a new user", handler.RemoteEndPoint);
 
-            string loginORcreate = recievemessage(handler);
-            if (loginORcreate == "C")
-            {
-                string username = recievemessage(handler);
-                CreateNewUser(handler, username);
-            }
-            else if (loginORcreate == "L")
-            {
-                string username = recievemessage(handler);
-                SignIn(handler, username);
+
+                    CreateNewUser(handler);
+                }
+                else if (loginORcreate == "L")
+                {
+                    string username = recievemessage(handler);
+                    SignIn(handler, username);
+                }
             }
         }
         catch
@@ -84,21 +89,22 @@ public static class ServerClass
     {
 
     }
-    private static void CreateNewUser(Socket handler, string username)
+    private static void CreateNewUser(Socket handler)
     {
-        for(; ; )
+        string username = recievemessage(handler);
+        if(username == "quit")
+        {
+            return;
+        }
+        for (; ; )
         {
             if (accounts.ContainsKey(username))
             {
                 sendmessage(handler, "E:1\r");
             }
-            else if (username.Contains(","))
-            {
-                sendmessage(handler, "E:2\r");
-            }
             else
             {
-                sendmessage(handler, "\r\n");
+                sendmessage(handler, "null");
                 accounts.Add(username, new users(username, recievemessage(handler)));
                 Console.WriteLine("New User: '" + username + "' has been created.");
                 ExportUsers();
