@@ -93,7 +93,7 @@ public static class ServerClass
             {
                 Console.WriteLine("user Forcefully Disconnected 2");
                 s.Shutdown(SocketShutdown.Both);
-                break;d
+                break;
             }
         }
     }
